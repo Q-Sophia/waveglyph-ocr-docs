@@ -15,4 +15,6 @@ If an integration stopped working after upgrading from the synchronous V1 API, s
 
 The HTTP service is installed privately by the application operator; only these
 API documents are public. Replace `http://localhost:8000` in examples with the
-configured service origin. There is no public OCR endpoint or API key requirement.
+configured service origin. There is no public OCR endpoint. V2 access credentials are provisioned by the local
+operator; HMAC request signing is specified in the migration guide.
+Documentation revision: **2026-10-16-r2**, adding the complete V2 authentication contract.

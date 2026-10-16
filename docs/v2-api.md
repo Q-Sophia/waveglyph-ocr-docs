@@ -1,5 +1,14 @@
 # WaveGlyph OCR V2 API reference (2.0.0)
 
+## Authentication prerequisite
+
+Every V2 request, including every poll, requires the HMAC-SHA256 protocol in the
+[Migration Guide](migration-v1-to-v2.md#v2-request-authentication-and-canonicalization).
+That guide is the normative source for canonicalization, signed field order,
+header formatting, timestamp/nonce rules and conformance test vectors. The JSON
+examples below are payloads only; they are not unsigned complete requests.
+Authentication precedes schema validation; unauthenticated probes receive only 401.
+
 ## Submission
 
 `POST /v2/jobs`, `Content-Type: application/json`:
@@ -66,12 +75,13 @@ result for these conditions, and do not poll an unknown state indefinitely.
 | --- | --- | --- |
 | 202 | Job accepted | queued submission envelope |
 | 200 | Known job or health | state envelope or health object |
+| 401 | Authentication, clock or replay failure | `{"error":{"code":"authentication_failed"}}` |
 | 410 | Retired V1 POST | `{"error":{"code":"api_retired"}}` |
 | 422 | Invalid V2 request | `{"error":{"code":"invalid_request"}}` |
 | 404 | Unknown/expired job | `{"error":{"code":"job_not_found"}}` |
 | 503 | Capacity exhausted | `{"error":{"code":"capacity_exceeded"}}` |
 
-Other missing routes return the framework's generic 404 `{"detail":"Not Found"}`;
+Authenticated missing V2 routes and missing non-V2 routes return the framework's generic 404 `{"detail":"Not Found"}`;
 unsupported methods return 405. Non-2xx HTTP responses are service errors.
 Validation errors intentionally do not expose schema details.
 
